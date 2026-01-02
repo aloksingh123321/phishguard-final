@@ -1,27 +1,21 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
-.env
-
-# Node.js
+# Dependencies
 node_modules/
-npm-debug.log
-yarn-error.log
+__pycache__/
+venv/
+
+# Next.js
 .next/
 out/
 build/
-dist/
+
+# Environment
+.env
+.env.local
+
+# Database (Optional - user said "keep if you want history", but usually ignored in production. I will ignore to keep repo clean)
+*.db
+*.sqlite3
 
 # System
 .DS_Store
 Thumbs.db
-
-# Database
-*.db
-*.sqlite3
-
-# IDE
-.vscode/
-.idea/

@@ -8,6 +8,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } 
 import Link from 'next/link';
 import ResultCard from '../components/ResultCard';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
 export default function Home() {
     const [url, setUrl] = useState('');
     const [loading, setLoading] = useState(false);
@@ -22,7 +24,7 @@ export default function Home() {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch('/api/history');
+            const res = await fetch(`${API_URL}/history`);
             const data = await res.json();
             setHistory(data);
         } catch (e) {
@@ -78,7 +80,7 @@ export default function Home() {
         }
 
         try {
-            const response = await fetch('/api/scan', {
+            const response = await fetch(`${API_URL}/scan`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url }),

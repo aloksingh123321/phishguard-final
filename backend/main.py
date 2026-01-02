@@ -128,6 +128,6 @@ def clear_logs():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # Running on Port 8000 to match Frontend expectations
-    print("🚀 PhishGuard Flask Backend Running on Port 8000")
-    app.run(debug=True, port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    print(f"🚀 PhishGuard Flask Backend Running on Port {port}")
+    app.run(host='0.0.0.0', port=port)
