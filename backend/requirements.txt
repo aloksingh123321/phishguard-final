@@ -1,8 +1,2 @@
-fastapi
-uvicorn
-scikit-learn
-pandas
-numpy
-pydantic
-requests
-beautifulsoup4
+Flask
+Flask-Cors
