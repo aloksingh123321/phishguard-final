@@ -1,2 +1,11 @@
 flask
 flask-cors
+numpy
+scikit-learn
+joblib
+beautifulsoup4
+requests
+gunicorn
+# Turso Integration
+libsql-experimental
+python-dotenv

@@ -12,13 +12,13 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from ml_engine.feature_extractor import extract_features
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-DB_NAME = "phishguard.db"
+from backend.database import get_db_connection
 
 # --- DATABASE SETUP ---
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     # Create table with new schema if it doesn't exist
     c.execute('''CREATE TABLE IF NOT EXISTS scan_history 
@@ -47,7 +47,7 @@ init_db()
 
 # --- ROUTES ---
 
-@app.route('/scan', methods=['POST'])
+@app.route('/api/scan', methods=['POST'])
 def scan_url():
     data = request.json
     url = data.get('url', '')
@@ -58,7 +58,7 @@ def scan_url():
     
     # 2. Database Save
     try:
-        conn = sqlite3.connect(DB_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Convert insights list to JSON string for storage
@@ -73,9 +73,9 @@ def scan_url():
 
     return jsonify(result)
 
-@app.route('/history', methods=['GET'])
+@app.route('/api/history', methods=['GET'])
 def get_history():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     # Limit 500 for performance
@@ -95,9 +95,9 @@ def get_history():
     conn.close()
     return jsonify(rows)
 
-@app.route('/admin/all-data', methods=['GET'])
+@app.route('/api/admin/all-data', methods=['GET'])
 def get_all_data():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     c.execute("SELECT * FROM scan_history ORDER BY id DESC")
@@ -115,10 +115,10 @@ def get_all_data():
     return jsonify(rows)
 
 # Added Clear Logs for Admin Console compatibility
-@app.route('/admin/clear-logs', methods=['DELETE'])
+@app.route('/api/admin/clear-logs', methods=['DELETE'])
 def clear_logs():
     try:
-        conn = sqlite3.connect(DB_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         c.execute("DELETE FROM scan_history")
         conn.commit()
