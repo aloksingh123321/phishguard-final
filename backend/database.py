@@ -82,10 +82,11 @@ def get_db_connection():
     if turso_url and turso_auth:
         try:
             import libsql_client
+            # Use the sync client for compatibility with Flask's sync route handlers
             client = libsql_client.create_client_sync(url=turso_url, auth_token=turso_auth)
             return TursoConnection(client)
         except ImportError:
-            print("⚠️ libsql-client not installed. Falling back to local SQLite.")
+            print("⚠️ libSQL Client not installed (pip install libsql-client). Falling back to local SQLite.")
         except Exception as e:
             print(f"⚠️ Turso Connection Failed: {e}. Falling back to local SQLite.")
 

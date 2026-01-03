@@ -7,5 +7,5 @@ beautifulsoup4
 requests
 gunicorn
 # Turso Integration
-libsql-experimental
+libsql-client
 python-dotenv
