@@ -22,11 +22,19 @@ export default function Home() {
 
     const fetchHistory = async () => {
         try {
+            console.log("Fetching history from /api/history...");
             const res = await fetch('/api/history');
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`HTTP error! status: ${res.status} - ${errorText}`);
+            }
+
             const data = await res.json();
+            console.log("History loaded:", data);
             setHistory(data);
         } catch (e) {
-            console.error("Failed to load history", e);
+            console.error("Failed to load history:", e);
             toast.error("Failed to load history from backend");
         }
     };
