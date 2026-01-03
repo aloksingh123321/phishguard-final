@@ -13,6 +13,12 @@
                 "includeFiles": [
                     "backend/**",
                     "requirements.txt"
+                ],
+                "excludeFiles": [
+                    "frontend/**",
+                    "node_modules/**",
+                    ".next/**",
+                    "public/**"
                 ]
             }
         }
