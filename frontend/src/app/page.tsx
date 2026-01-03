@@ -8,11 +8,21 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } 
 import Link from 'next/link';
 import ResultCard from '../components/ResultCard';
 
+interface ScanResult {
+    url: string;
+    is_phishing: boolean;
+    confidence_score: number;
+    risk_level: string;
+    status: string;
+    insights?: any[];
+    timestamp?: string;
+}
+
 export default function Home() {
     const [url, setUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [scanStatus, setScanStatus] = useState('');
-    const [result, setResult] = useState(null);
+    const [result, setResult] = useState<ScanResult | null>(null);
     const [history, setHistory] = useState([]);
 
     // Fetch History on Mount
