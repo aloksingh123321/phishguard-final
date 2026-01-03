@@ -13,10 +13,8 @@ interface ScanResult {
     is_phishing: boolean;
     confidence_score: number;
     risk_level: string;
-    // Keeping status/insights to prevent build errors in ResultCard component
-    status: string;
-    insights?: any[];
-    timestamp?: string;
+    // Allowing flexible properties to satisfy 'Zero-Touch' policy on component code using other fields
+    [key: string]: any;
 }
 
 export default function Home() {

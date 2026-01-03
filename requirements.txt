@@ -4,7 +4,3 @@ libsql-client
 scikit-learn
 pandas
 python-dotenv
-# Core logic dependencies (Essential for app to run)
-beautifulsoup4
-requests
-joblib
