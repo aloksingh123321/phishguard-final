@@ -13,6 +13,7 @@ interface ScanResult {
     is_phishing: boolean;
     confidence_score: number;
     risk_level: string;
+    // Keeping status/insights to prevent build errors in ResultCard component
     status: string;
     insights?: any[];
     timestamp?: string;

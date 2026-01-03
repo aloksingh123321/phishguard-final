@@ -1,12 +1,10 @@
 flask
 flask-cors
-numpy
+libsql-client
 scikit-learn
-joblib
+pandas
+python-dotenv
+# Core logic dependencies (Essential for app to run)
 beautifulsoup4
 requests
-gunicorn
-# Turso Integration
-libsql-client
-python-dotenv
-pandas
+joblib
