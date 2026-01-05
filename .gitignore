@@ -35,6 +35,8 @@ wheels/
 venv/
 .venv/
 ENV/
+backend/venv/
+backend/.venv/
 
 # --- Environment Variables ---
 .env
@@ -51,4 +53,3 @@ ENV/
 # --- OS Specific ---
 .DS_Store
 Thumbs.db
-.vercel
