@@ -1,8 +1,38 @@
-/frontend
-/node_modules
-/.next
-/public
-/backend/__pycache__
-*.db
+# Ignore everything by default first? No, standard ignore list.
+
+# Frontend - Vercel builds this separately, but we don't need source in the backend function
+frontend/
+node_modules/
+.next/
+out/
+build/
+dist/
+.vercel/
+
+# Heavy Python Stuff
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+**/__pycache__/
 *.pyc
-.git
+*.pyo
+*.pyd
+
+# Heavy Database Files
+*.db
+*.sqlite
+*.sqlite3
+phishguard.db
+
+# Git
+.git/
+.gitignore
+
+# Tests
+tests/
+test/
+
+# Misc
+.DS_Store
+Thumbs.db

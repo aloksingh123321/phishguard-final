@@ -1,6 +1,5 @@
 flask
 flask-cors
 libsql-client
-scikit-learn
-pandas
 python-dotenv
+gunicorn
