@@ -17,8 +17,12 @@
                 "excludeFiles": [
                     "frontend/**",
                     "node_modules/**",
-                    ".next/**",
-                    "public/**"
+                    "**/*.db",
+                    "**/*.sqlite",
+                    "**/venv/**",
+                    "**/.venv/**",
+                    "**/__pycache__/**",
+                    "**/*.pkl"
                 ]
             }
         }

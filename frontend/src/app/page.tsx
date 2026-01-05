@@ -33,7 +33,7 @@ export default function Home() {
 
     const fetchHistory = async () => {
         try {
-            console.log("Fetching history from http://127.0.0.1:8000/api/history...");
+            console.log("Fetching history from /api/history...");
             const res = await fetch('/api/history');
 
             if (!res.ok) {
