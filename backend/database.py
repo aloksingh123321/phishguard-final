@@ -4,10 +4,14 @@ import datetime
 
 # Determine DB path for local usage
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_NAME = os.path.join(BASE_DIR, "backend", "phishguard.db")
-if not os.path.exists(os.path.dirname(DB_NAME)):
-    # Fallback if running from root without backend folder in path correctly
-    DB_NAME = "phishguard.db"
+if os.environ.get('VERCEL') == '1':
+    # Vercel only allows writing to /tmp
+    DB_NAME = "/tmp/phishguard.db"
+else:
+    DB_NAME = os.path.join(BASE_DIR, "backend", "phishguard.db")
+    if not os.path.exists(os.path.dirname(DB_NAME)):
+        # Fallback if running from root without backend folder in path correctly
+        DB_NAME = "phishguard.db"
 
 class TursoCursor:
     """Wrapper to make Turso ResultSet behave like sqlite3 cursor"""
