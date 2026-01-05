@@ -1,4 +1,10 @@
 {
+    "functions": {
+        "api/index.py": {
+            "includeFiles": "backend/**",
+            "maxDuration": 10
+        }
+    },
     "rewrites": [
         {
             "source": "/api/(.*)",
