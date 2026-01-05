@@ -12,10 +12,17 @@ build/
 .env
 .env.local
 
-# Database (Optional - user said "keep if you want history", but usually ignored in production. I will ignore to keep repo clean)
+# Database
 *.db
 *.sqlite3
 
 # System
 .DS_Store
 Thumbs.db
+
+# Strict Exclusions (User Requested)
+backend/venv/
+backend/.venv/
+**/__pycache__/
+*.db
+*.sqlite3
