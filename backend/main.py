@@ -127,6 +127,26 @@ def clear_logs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/admin/stats', methods=['GET'])
+def get_stats():
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("SELECT COUNT(*) FROM scan_history")
+        total = c.fetchone()[0]
+        
+        c.execute("SELECT COUNT(*) FROM scan_history WHERE risk_level IN ('CRITICAL', 'HIGH')")
+        high_risk = c.fetchone()[0]
+        
+        c.execute("SELECT COUNT(*) FROM scan_history WHERE risk_level = 'SAFE'")
+        verified = c.fetchone()[0]
+        
+        conn.close()
+        return jsonify({"total": total, "high_risk": high_risk, "verified": verified})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8000))
     print(f"🚀 PhishGuard Flask Backend Running on Port {port}")

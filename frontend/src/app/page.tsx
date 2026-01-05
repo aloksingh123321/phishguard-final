@@ -13,6 +13,8 @@ interface ScanResult {
     is_phishing: boolean;
     confidence_score: number;
     risk_level: string;
+    status: string;
+    insights?: string[];
     // Allowing flexible properties to satisfy 'Zero-Touch' policy on component code using other fields
     [key: string]: any;
 }
@@ -32,7 +34,7 @@ export default function Home() {
     const fetchHistory = async () => {
         try {
             console.log("Fetching history from http://127.0.0.1:8000/api/history...");
-            const res = await fetch('http://127.0.0.1:8000/api/history');
+            const res = await fetch('/api/history');
 
             if (!res.ok) {
                 const errorText = await res.text();
@@ -95,7 +97,7 @@ export default function Home() {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/scan', {
+            const response = await fetch('/api/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url }),

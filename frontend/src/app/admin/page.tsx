@@ -16,26 +16,26 @@ export default function AdminPage() {
     }, []);
 
     const fetchData = async () => {
-        const res = await fetch('http://localhost:8000/admin/all-data');
+        const res = await fetch('/api/admin/all-data');
         const data = await res.json();
         setHistory(data);
     };
 
     const fetchStats = async () => {
-        const res = await fetch('http://localhost:8000/admin/stats');
+        const res = await fetch('/api/admin/stats');
         const data = await res.json();
         setStats(data);
     };
 
     const handleClearLogs = async () => {
         if (!confirm("⚠️ ARE YOU SURE? This will delete ALL scan history permanently.")) return;
-        await fetch('http://localhost:8000/admin/clear-logs', { method: 'DELETE' });
+        await fetch('/api/admin/clear-logs', { method: 'DELETE' });
         fetchData();
         fetchStats();
     };
 
     const handleExport = () => {
-        window.open('http://localhost:8000/admin/export', '_blank');
+        window.open('/api/admin/export', '_blank');
     };
 
     const filteredHistory = history.filter((item: any) =>
