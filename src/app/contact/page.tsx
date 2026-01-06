@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
@@ -7,11 +8,45 @@ import { Mail, MapPin, Phone, Send } from 'lucide-react';
 export default function Contact() {
     const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
 
+    const form = useRef<HTMLFormElement>(null);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('sending');
-        // Simulate sending
-        setTimeout(() => setStatus('sent'), 1500);
+
+        // EMAILJS CONFIGURATION
+        // REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL EMAILJS KEYS
+        // 1. Sign up at https://www.emailjs.com/
+        // 2. Create a new Email Service (e.g., Gmail) -> Get Service ID
+        // 3. Create a new Email Template -> Get Template ID
+        //    (Template should accept {{user_name}}, {{user_email}}, {{message}})
+        // 4. Go to Account > API Keys -> Get Public Key
+
+        const SERVICE_ID = 'YOUR_SERVICE_ID'; // e.g., 'service_gmail'
+        const TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // e.g., 'template_phishguard'
+        const PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+
+        // Check if placeholders are still present to avoid error
+        if (SERVICE_ID === 'YOUR_SERVICE_ID') {
+            // Simulator Mode if keys aren't set yet
+            setTimeout(() => {
+                console.log("Simulating EmailJS success (Keys not configured)");
+                setStatus('sent');
+            }, 1500);
+            return;
+        }
+
+        if (form.current) {
+            emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current, PUBLIC_KEY)
+                .then((result) => {
+                    console.log('Email sent:', result.text);
+                    setStatus('sent');
+                }, (error) => {
+                    console.log('Email error:', error.text);
+                    setStatus('idle'); // Allow retry
+                    alert("Failed to send message. Please check your network or API keys.");
+                });
+        }
     };
 
     return (
@@ -61,26 +96,26 @@ export default function Contact() {
                                 </button>
                             </div>
                         ) : (
-                            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                            <form ref={form} onSubmit={handleSubmit} className="space-y-6 relative z-10">
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-500 uppercase">First Name</label>
-                                        <input required type="text" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="John" />
+                                        <input required name="user_name" type="text" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="John" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-500 uppercase">Last Name</label>
-                                        <input required type="text" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Doe" />
+                                        <input type="text" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Doe" />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Email Address</label>
-                                    <input required type="email" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="john@company.com" />
+                                    <input required name="user_email" type="email" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="john@company.com" />
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Message</label>
-                                    <textarea required rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="How can we help?"></textarea>
+                                    <textarea required name="message" rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="How can we help?"></textarea>
                                 </div>
 
                                 <button
