@@ -2,20 +2,24 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ShieldCheck, Lock, User, LogOut } from 'lucide-react';
 import LoginModal from './LoginModal';
 
 export default function Header() {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [user, setUser] = useState<string | null>(null);
+    const router = useRouter();
 
     const handleLogin = (username: string) => {
         setUser(username);
         setIsLoginOpen(false);
+        router.push('/admin');
     };
 
     const handleLogout = () => {
         setUser(null);
+        router.push('/');
     };
 
     return (

@@ -1,10 +1,5 @@
 {
-    "functions": {
-        "api/index.py": {
-            "includeFiles": "backend/**",
-            "maxDuration": 10
-        }
-    },
+    "version": 2,
     "rewrites": [
         {
             "source": "/api/(.*)",
@@ -12,7 +7,7 @@
         },
         {
             "source": "/(.*)",
-            "destination": "/$1"
+            "destination": "/frontend/$1"
         }
     ]
 }
