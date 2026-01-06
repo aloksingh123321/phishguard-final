@@ -1,31 +1,47 @@
 import Link from 'next/link';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Lock } from 'lucide-react';
 
 export default function Header() {
     return (
-        <header className="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+        <header className="fixed top-0 w-full z-50 glass-nav transition-all duration-300 border-b border-white/5">
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-3 group">
+                <Link href="/" className="flex items-center gap-3 group relative">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-cyan-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity" />
-                        <ShieldCheck className="w-8 h-8 text-cyan-400 relative z-10" />
+                        <div className="absolute inset-0 bg-cyan-500 blur-xl opacity-20 group-hover:opacity-50 transition-all duration-500" />
+                        <ShieldCheck className="w-8 h-8 text-cyan-400 relative z-10 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">
-                        PhishGuard<span className="text-cyan-400">Pro</span>
-                    </span>
+                    <div className="flex flex-col">
+                        <span className="text-xl font-bold tracking-tight text-white group-hover:text-cyan-50 transition-colors">
+                            PhishGuard<span className="text-cyan-400">Pro</span>
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-cyan-500/80 font-semibold">
+                            Intelligence
+                        </span>
+                    </div>
                 </Link>
 
                 {/* Navigation */}
-                <nav className="hidden md:flex items-center gap-8">
-                    <Link href="#hero" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Hero</Link>
-                    <Link href="#detection" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Intelligence</Link>
-                    <Link href="#analytics" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Analytics</Link>
-                    <Link href="#contact" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Contact</Link>
+                <nav className="hidden md:flex items-center gap-8 bg-black/20 px-8 py-2 rounded-full border border-white/5 backdrop-blur-md">
+                    {[
+                        ['Home', '#hero'],
+                        ['About', '#detection'],
+                        ['Analytics', '#analytics'],
+                        ['Contact', '#contact']
+                    ].map(([label, href]) => (
+                        <Link
+                            key={label}
+                            href={href}
+                            className="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-all hover:scale-105 active:scale-95"
+                        >
+                            {label}
+                        </Link>
+                    ))}
                 </nav>
 
                 {/* Action Button */}
-                <button className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-semibold hover:bg-cyan-500/20 transition-all hover:scale-105 active:scale-95">
+                <button className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-900/20 to-violet-900/20 border border-cyan-500/20 text-cyan-400 text-sm font-bold hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all group">
+                    <Lock className="w-4 h-4 group-hover:text-cyan-300 transition-colors" />
                     <span>Enterprise Login</span>
                 </button>
             </div>

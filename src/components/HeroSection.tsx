@@ -2,64 +2,87 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Zap, Globe, Lock } from 'lucide-react';
 
 export default function HeroSection({ children }: { children: React.ReactNode }) {
     return (
-        <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-12 px-4 overflow-hidden">
-            {/* Background Animations */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/10 rounded-full blur-[120px] -z-10 animate-pulse-glow" />
-            <div className="absolute top-0 w-full h-full bg-grid-pattern opacity-20 -z-10" />
+        <section id="hero" className="relative min-h-[110vh] flex flex-col items-center justify-center pt-32 pb-20 px-4 overflow-hidden">
 
-            {/* 3D Shield Element (Abstracted with CSS) */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="mb-8 relative"
-            >
-                <div className="relative w-32 h-32 flex items-center justify-center">
-                    <div className="absolute inset-0 border-2 border-cyan-500/30 rounded-full animate-spin-slow" />
-                    <div className="absolute inset-2 border-2 border-dashed border-violet-500/30 rounded-full animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '15s' }} />
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-cyan-500/20 to-violet-500/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_40px_rgba(6,182,212,0.4)] animate-float">
-                        <ShieldCheck className="w-12 h-12 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
-                    </div>
-                </div>
-            </motion.div>
+            {/* --- ADVANCED BACKGROUND --- */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                {/* Radial Gradients */}
+                <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-cyan-500/10 rounded-full blur-[120px] mix-blend-screen animate-pulse-glow" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-violet-600/10 rounded-full blur-[120px] mix-blend-screen animate-pulse-glow" style={{ animationDelay: '2s' }} />
 
-            {/* Typography */}
+                {/* Grid */}
+                <div className="absolute inset-0 bg-grid-pattern opacity-30 mask-gradient" />
+            </div>
+
+            {/* --- 3D FLOATING ELEMENTS --- */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <motion.div
+                    animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-1/4 left-[10%] p-4 glass rounded-2xl border-l-4 border-cyan-500 opacity-60 hidden lg:block"
+                >
+                    <Zap className="w-6 h-6 text-cyan-400" />
+                </motion.div>
+
+                <motion.div
+                    animate={{ y: [0, 30, 0], rotate: [0, -5, 0] }}
+                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute bottom-1/3 right-[15%] p-4 glass rounded-2xl border-l-4 border-violet-500 opacity-60 hidden lg:block"
+                >
+                    <Lock className="w-6 h-6 text-violet-400" />
+                </motion.div>
+
+                <motion.div
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="absolute top-1/3 right-[10%] text-cyan-900/20"
+                >
+                    <Globe className="w-64 h-64" />
+                </motion.div>
+            </div>
+
+            {/* --- MAIN CONTENT --- */}
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-center max-w-4xl space-y-6 mb-12"
+                transition={{ duration: 0.8 }}
+                className="relative z-10 flex flex-col items-center text-center max-w-5xl mx-auto space-y-8"
             >
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 backdrop-blur-sm mb-4">
+                {/* Status Badge */}
+                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-950/30 backdrop-blur-md shadow-lg shadow-cyan-500/10 mb-6 group cursor-default hover:border-cyan-500/50 transition-colors">
                     <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                     </span>
-                    <span className="text-xs font-mono text-cyan-400 tracking-wider">SYSTEM ACTIVE // V2.0</span>
+                    <span className="text-xs font-mono text-cyan-300 tracking-widest font-bold">THREAT INTEL ENGINE V2.0</span>
                 </div>
 
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">
-                    Next-Gen AI <br />
-                    <span className="text-gradient hover:scale-105 transition-transform inline-block cursor-default">Threat Intelligence</span>
+                {/* Typography */}
+                <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-[0.9]">
+                    Advanced AI <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 animate-gradient-x bg-300% drop-shadow-2xl">
+                        Threat Intelligence
+                    </span>
                 </h1>
 
                 <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed text-balance">
-                    Detect sophisticated phishing attacks, brand impersonation, and zero-day threats with our enterprise-grade heuristic engine.
+                    Deploy enterprise-grade heuristics to detect <span className="text-cyan-400 font-semibold">Zero-Day Phishing</span>, <span className="text-violet-400 font-semibold">Brand Spoofing</span>, and <span className="text-fuchsia-400 font-semibold">DGA Botnets</span> in milliseconds.
                 </p>
-            </motion.div>
 
-            {/* Scanner Slot - (Input form passed as children) */}
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="w-full max-w-2xl relative z-20"
-            >
-                {children}
+                {/* Interactive Scanner Area */}
+                <div className="w-full max-w-2xl mt-12 mb-8 relative z-20">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-violet-600 rounded-2xl blur-2xl opacity-20 animate-pulse-glow" />
+                    {children}
+                </div>
+
+                <p className="text-xs text-slate-500 font-mono tracking-wide">
+                    TRUSTED BY SECURITY TEAMS WORLDWIDE
+                </p>
+
             </motion.div>
         </section>
     );

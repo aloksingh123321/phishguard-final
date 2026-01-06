@@ -101,6 +101,10 @@ def extract_features(url, html_content=""):
     Strictly follows Layered Priority: Trusted > Blacklist > Content > Heuristics > Dev Platform
     """
     try:
+        # Prepend protocol if missing for proper parsing
+        if not re.match(r'^[a-zA-Z]+://', url):
+            url = 'http://' + url
+            
         parsed_url = urlparse(url)
         domain = parsed_url.netloc.lower()
         if domain.startswith("www."):

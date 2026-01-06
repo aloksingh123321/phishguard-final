@@ -1,5 +1,0 @@
-flask
-flask-cors
-libsql-client
-python-dotenv
-gunicorn

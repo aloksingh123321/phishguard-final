@@ -1,58 +1,70 @@
-import { Github, Twitter, Shield } from 'lucide-react';
+import Link from 'next/link';
+import { Github, Twitter, Shield, CheckCircle } from 'lucide-react';
 
 export default function Footer() {
     return (
-        <footer className="border-t border-white/5 bg-black/40 backdrop-blur-xl mt-20">
-            <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <footer className="border-t border-white/5 bg-[#050508] relative overflow-hidden mt-32">
+            {/* Background Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/5 blur-[100px] pointer-events-none" />
+
+            <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
 
                 {/* Brand Column */}
-                <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-white font-bold text-lg">
-                        <Shield className="w-6 h-6 text-cyan-400" />
+                <div className="space-y-6">
+                    <div className="flex items-center gap-2 text-white font-bold text-xl">
+                        <div className="p-2 bg-cyan-500/10 rounded-lg">
+                            <Shield className="w-6 h-6 text-cyan-400" />
+                        </div>
                         <span>PhishGuard Pro</span>
                     </div>
-                    <p className="text-sm text-slate-400 leading-relaxed">
-                        Enterprise-grade phishing detection powered by advanced heuristic AI.
-                        Securing the digital frontier, one URL at a time.
+                    <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
+                        Advanced AI-driven threat intelligence platform detecting zero-day phishing attacks with 99.9% accuracy.
                     </p>
+                    <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full w-fit border border-emerald-500/20">
+                        <CheckCircle className="w-3 h-3" />
+                        <span>All Systems Operational</span>
+                    </div>
                 </div>
 
                 {/* Links Column 1 */}
                 <div>
-                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Platform</h3>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                        <li><a href="#" className="hover:text-cyan-400 transition-colors">Feature Tour</a></li>
-                        <li><a href="#" className="hover:text-cyan-400 transition-colors">API Access</a></li>
-                        <li><a href="#" className="hover:text-cyan-400 transition-colors">Enterprise Plans</a></li>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6 border-l-2 border-cyan-500 pl-3">Platform</h3>
+                    <ul className="space-y-3 text-sm text-slate-400">
+                        <li><a href="#detection" className="hover:text-cyan-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">Technology</a></li>
+                        <li><a href="#analytics" className="hover:text-cyan-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">Live Analytics</a></li>
+                        <li><a href="#" className="hover:text-cyan-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">Enterprise API</a></li>
                     </ul>
                 </div>
 
                 {/* Links Column 2 */}
                 <div>
-                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Legal</h3>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                        <li><a href="/privacy" className="hover:text-cyan-400 transition-colors text-left">Privacy Policy</a></li>
-                        <li><a href="/terms" className="hover:text-cyan-400 transition-colors text-left">Terms of Service</a></li>
-                        <li><button className="hover:text-cyan-400 transition-colors text-left">Security Audit</button></li>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6 border-l-2 border-violet-500 pl-3">Legal</h3>
+                    <ul className="space-y-3 text-sm text-slate-400">
+                        <li><Link href="/privacy" className="hover:text-violet-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">Privacy Policy</Link></li>
+                        <li><Link href="/terms" className="hover:text-violet-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">Terms of Service</Link></li>
+                        <li><Link href="#" className="hover:text-violet-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">Security Audit</Link></li>
                     </ul>
                 </div>
 
                 {/* Social Column */}
                 <div>
-                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Connect</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6 border-l-2 border-amber-500 pl-3">Connect</h3>
                     <div className="flex gap-4">
-                        <a href="#" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-cyan-400 transition-all">
+                        <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-white/10 hover:text-white hover:scale-110 transition-all border border-white/5 hover:border-white/20">
                             <Github className="w-5 h-5" />
                         </a>
-                        <a href="#" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 hover:text-cyan-400 transition-all">
+                        <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-white/10 hover:text-cyan-400 hover:scale-110 transition-all border border-white/5 hover:border-cyan-500/30">
                             <Twitter className="w-5 h-5" />
                         </a>
                     </div>
                 </div>
 
             </div>
-            <div className="border-t border-white/5 py-6 text-center text-xs text-slate-600">
-                © 2026 Alok Singh. All rights reserved. System Version 2.0.4 [Stable]
+
+            <div className="border-t border-white/5 py-8 text-center">
+                <p className="text-xs text-slate-600 font-mono">
+                    © 2026 Alok Singh. All rights reserved. <span className="text-slate-500">v2.1.0-stable</span>
+                </p>
             </div>
         </footer>
     );
