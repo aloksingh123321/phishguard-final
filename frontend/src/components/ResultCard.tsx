@@ -2,8 +2,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, AlertTriangle, Globe, Lock, Shield, ShieldCheck, Eye, Terminal, Download, AlertOctagon } from 'lucide-react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// Dynamic imports used in handler
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
+import { toast } from 'sonner';
 
 interface ScanResponse {
     url: string;
@@ -21,49 +23,129 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
     const isVerified = result.status === 'VERIFIED';
     const safeUrl = result?.url || '';
 
+    const [isGeneratingPdf, setIsGeneratingPdf] = React.useState(false);
+
     // PDF Generation Logic
-    const handleDownloadPDF = () => {
-        if (!result) {
-            alert("No scan data available");
-            return;
+    const handleDownloadPDF = async () => {
+        if (!result) return;
+        setIsGeneratingPdf(true);
+
+        try {
+            const jsPDF = (await import('jspdf')).default;
+            const autoTable = (await import('jspdf-autotable')).default;
+
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.width;
+
+            // Header Background
+            doc.setFillColor(5, 5, 8); // Dark #050508
+            doc.rect(0, 0, pageWidth, 40, 'F');
+
+            // Logo Text
+            doc.setFontSize(22);
+            doc.setTextColor(6, 182, 212); // Cyan-400
+            doc.setFont("helvetica", "bold");
+            doc.text("PhishGuard", 14, 25);
+            doc.setFontSize(10);
+            doc.setTextColor(148, 163, 184); // Slate-400
+            doc.text("Enterprise Threat Intelligence", 14, 32);
+
+            // Report Header
+            doc.setFontSize(16);
+            doc.setTextColor(40, 40, 40);
+            doc.text("Security Scan Report", 14, 60);
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 66);
+
+            // Access Grid
+            doc.setDrawColor(200, 200, 200);
+            doc.line(14, 75, pageWidth - 14, 75);
+
+            // Report Details
+            const startY = 85;
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+
+            // Row 1
+            doc.setFont("helvetica", "bold");
+            doc.text("Target URL:", 14, startY);
+            doc.setFont("helvetica", "normal");
+            doc.text(safeUrl, 50, startY);
+
+            // Row 2
+            doc.setFont("helvetica", "bold");
+            doc.text("Risk Level:", 14, startY + 10);
+            const rLevel = result.risk_level.toUpperCase();
+            if (rLevel === 'SAFE' || rLevel === 'LOW') doc.setTextColor(0, 150, 0); // Green
+            else if (rLevel === 'CAUTION') doc.setTextColor(255, 140, 0); // Orange
+            else doc.setTextColor(220, 20, 20); // Red
+            doc.setFont("helvetica", "bold");
+            doc.text(rLevel, 50, startY + 10);
+            doc.setTextColor(0, 0, 0);
+
+            // Row 3
+            doc.setFont("helvetica", "bold");
+            doc.text("Confidence:", 120, startY + 10);
+            doc.setFont("helvetica", "normal");
+            doc.text(`${result.confidence_score}%`, 150, startY + 10);
+
+            // Row 4
+            doc.setFont("helvetica", "bold");
+            doc.text("Status:", 14, startY + 20);
+            doc.setFont("helvetica", "normal");
+            doc.text(result.status || 'N/A', 50, startY + 20);
+
+            // Row 5
+            doc.setFont("helvetica", "bold");
+            doc.text("Domain Age:", 120, startY + 20);
+            doc.setFont("helvetica", "normal");
+            doc.text(result.domain_age_days ? `${result.domain_age_days} days` : 'Unknown', 150, startY + 20);
+
+
+            // Insights Table
+            if (result.insights && result.insights.length > 0) {
+                const tableBody = result.insights.map((insight) => [
+                    insight.replace(/^[🚨⛔⚠️🎣✅🔒ℹ️]*/g, '').trim() // Strip emojis for clean PDF
+                ]);
+
+                autoTable(doc, {
+                    startY: startY + 35,
+                    head: [['Detailed Heuristic Analysis']],
+                    body: tableBody,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [15, 23, 42], // Slate-900
+                        textColor: 255,
+                        fontStyle: 'bold'
+                    },
+                    styles: {
+                        fontSize: 10,
+                        cellPadding: 3,
+                    },
+                    alternateRowStyles: {
+                        fillColor: [248, 250, 252]
+                    }
+                });
+            }
+
+            // Footer
+            const pageCount = (doc as any).internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+                doc.text('© 2026 Alok Singh | PhishGuard Pro', 14, doc.internal.pageSize.height - 10);
+            }
+
+            doc.save(`PhishGuard_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+            toast.success("Report downloaded successfully");
+        } catch (error) {
+            console.error("PDF Generation Error", error);
+            toast.error(`Failed to generate PDF report: ${error instanceof Error ? error.message : String(error)}`);
+        } finally {
+            setIsGeneratingPdf(false);
         }
-
-        const doc = new jsPDF();
-
-        // Dark Theme PDF not easily possible with standard jsPDF without heavy config, 
-        // staying with standard white paper report for printability.
-        doc.setFontSize(20);
-        doc.setFont("helvetica", "bold");
-        doc.text("PhishGuard Security Report", 10, 20);
-        doc.setLineWidth(0.5);
-        doc.line(10, 25, 200, 25);
-
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-
-        doc.text(`Target URL: ${safeUrl}`, 10, 40);
-        doc.text(`Scan Date: ${new Date().toLocaleString()}`, 10, 50);
-
-        doc.text("Risk Level: ", 10, 60);
-        if (isSafe) doc.setTextColor(0, 128, 0);
-        else if (isCaution) doc.setTextColor(255, 165, 0);
-        else doc.setTextColor(255, 0, 0);
-
-        doc.text(result.risk_level, 35, 60);
-        doc.setTextColor(0, 0, 0);
-
-        if (result.insights && result.insights.length > 0) {
-            const tableBody = result.insights.map((insight) => [insight]);
-            autoTable(doc, {
-                startY: 70,
-                head: [['Security Insights / Reasons']],
-                body: tableBody,
-                theme: 'grid',
-                headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-            });
-        }
-
-        doc.save('PhishGuard_Report.pdf');
     };
 
     let statusColor = 'text-red-400';
@@ -84,7 +166,7 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
     }
 
     const container = {
-        hidden: { opacity: 0 },
+        hidden: { opacity: 1 },
         show: { opacity: 1, transition: { staggerChildren: 0.1 } }
     };
 
@@ -238,9 +320,18 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
 
             <button
                 onClick={handleDownloadPDF}
-                className="w-full mt-4 py-3 flex items-center justify-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99]"
+                disabled={isGeneratingPdf}
+                className="w-full mt-4 py-3 flex items-center justify-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                <Download className="w-4 h-4" /> Export Security Report
+                {isGeneratingPdf ? (
+                    <span className="flex items-center gap-2 animate-pulse">
+                        <Download className="w-4 h-4 animate-bounce" /> Generating Report...
+                    </span>
+                ) : (
+                    <>
+                        <Download className="w-4 h-4" /> Export Security Report
+                    </>
+                )}
             </button>
         </motion.div>
     );

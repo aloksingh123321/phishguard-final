@@ -7,7 +7,14 @@ import os
 import json
 
 # Ensure backend directory is in path for imports
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Ensure backend directory is in path for imports
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.dirname(current_dir)
+api_dir = os.path.join(root_dir, 'api')
+
+sys.path.append(current_dir) # For local imports if needed
+sys.path.append(root_dir)    # For 'backend.database' imports
+sys.path.append(api_dir)     # For 'ml_engine' imports
 
 from ml_engine.feature_extractor import extract_features
 

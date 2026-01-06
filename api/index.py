@@ -5,6 +5,9 @@ import datetime
 import os
 import json
 import sys
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Ensure current directory is in path for imports
 # This allows importing ml_engine whether running locally or on Vercel
@@ -95,13 +98,27 @@ def scan_url():
         insights_json = json.dumps(result.get('insights', []))
         
         c.execute("INSERT INTO scan_history (url, risk_level, status, insights, timestamp) VALUES (?, ?, ?, ?, ?)",
-                  (url, result['risk_level'], result['status'], insights_json, datetime.datetime.now()))
+                  (url, result.get('risk_level'), result.get('status'), insights_json, datetime.datetime.now()))
         conn.commit()
         conn.close()
     except Exception as e:
         print(f"Database Error: {e}")
 
-    return jsonify(result)
+    # 3. Format Response for Frontend
+    # Ensure keys match what Frontend expects (ScanResult interface)
+    formatted_result = {
+        "url": url,
+        "is_phishing": result.get('risk_level') in ['CRITICAL', 'HIGH'],
+        "confidence_score": result.get('confidence', 0),
+        "threat_level": result.get('risk_level', 'UNKNOWN'), # Mapping risk_level to threat_level if needed, or using same
+        "risk_level": result.get('risk_level', 'UNKNOWN'),   # Keep risk_level for compatibility
+        "status": result.get('status', 'UNKNOWN'),
+        "insights": result.get('insights', []),
+        "host": url.split('//')[-1].split('/')[0] if '//' in url else url.split('/')[0],
+        "protocol": url.split(':')[0] if ':' in url else 'http'
+    }
+
+    return jsonify(formatted_result)
 
 @app.route('/api/history', methods=['GET'])
 def get_history():
@@ -178,6 +195,36 @@ def get_stats():
         return jsonify({"total": total, "high_risk": high_risk, "verified": verified})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/contact', methods=['POST'])
+def contact_support():
+    data = request.json
+    email = data.get('email')
+    message = data.get('message')
+    
+    if not email or not message:
+        return jsonify({"error": "Missing fields"}), 400
+
+    sender_email = "notifications@phishguard.com" # Dummy sender
+    receiver_email = "aloksingh123c@gmail.com"
+    
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = f"New Contact Request from {email}"
+    msg.attach(MIMEText(message, 'plain'))
+    
+    try:
+        # Note: This requires a working SMTP server. 
+        # Using localhost for demonstration or catching error gracefully.
+        # In Vercel, use SendGrid/Resend API instead.
+        # with smtplib.SMTP('localhost') as server:
+        #     server.send_message(msg)
+        print(f"📧 Mock Email Sent to {receiver_email}: {message}")
+        return jsonify({"message": "Email sent successfully (Simulated)"})
+    except Exception as e:
+        print(f"Email Error: {e}")
+        return jsonify({"error": "Failed to send email"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8000))

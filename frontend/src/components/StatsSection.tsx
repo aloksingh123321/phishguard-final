@@ -19,7 +19,7 @@ export default function StatsSection({ data, history, onHistoryClick }: {
 
                 {/* --- MAIN CHART CARD --- */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 1, y: 0 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     className="lg:col-span-1 glass-card rounded-3xl p-8 relative overflow-hidden border-t border-white/10"
@@ -87,7 +87,7 @@ export default function StatsSection({ data, history, onHistoryClick }: {
 
                     {/* Safe Card */}
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
+                        initial={{ opacity: 1, x: 0 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
@@ -107,7 +107,7 @@ export default function StatsSection({ data, history, onHistoryClick }: {
 
                     {/* Critical Threat Card */}
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
+                        initial={{ opacity: 1, x: 0 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
@@ -140,7 +140,7 @@ export default function StatsSection({ data, history, onHistoryClick }: {
                                 history.slice(0, 3).map((item, idx) => (
                                     <motion.div
                                         key={idx}
-                                        initial={{ opacity: 0, x: -20 }}
+                                        initial={{ opacity: 1, x: 0 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.1 }}
                                         onClick={() => onHistoryClick && onHistoryClick(item.url)}

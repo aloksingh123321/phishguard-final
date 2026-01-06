@@ -64,15 +64,20 @@ export default function Home() {
 
         for (const status of sequence) {
             setScanStatus(status);
-            await new Promise(r => setTimeout(r, 600)); // Faster 600ms
+            await new Promise(r => setTimeout(r, 600));
         }
 
         try {
+            // Try explicit local URL first if proxy fails, or handle both
+            // Use relative path for Vercel deployment (proxied by next.config.mjs or vercel.json)
             const response = await fetch('/api/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url }),
             });
+
+            if (!response.ok) throw new Error(`Scan failed: ${response.statusText}`);
+
             const data = await response.json();
             setResult(data);
 
@@ -82,7 +87,8 @@ export default function Home() {
 
             fetchHistory();
         } catch (error) {
-            toast.error("Error connecting to scanner engine");
+            console.error("Scan Error:", error);
+            toast.error("Connection Error: Ensure Backend is Running (Port 8000)");
         } finally {
             setLoading(false);
             setScanStatus('');

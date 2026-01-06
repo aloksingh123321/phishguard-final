@@ -1,6 +1,39 @@
+import { useState } from 'react';
 import { Terminal, Database, Cpu, Send, ShieldAlert, Fingerprint } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function ContentSections() {
+    const [email, setEmail] = useState('');
+    const [inquiryType, setInquiryType] = useState('API Access');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    message: `Inquiry Type: ${inquiryType}`
+                }),
+            });
+
+            if (res.ok) {
+                toast.success("Request sent successfully!");
+                setEmail('');
+            } else {
+                toast.error("Failed to send request.");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Error sending request.");
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <>
             {/* --- INTELLIGENCE SECTION --- */}
@@ -42,7 +75,7 @@ export default function ContentSections() {
                             <div className="w-full bg-slate-800/50 rounded-lg h-1.5 overflow-hidden">
                                 <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 w-[85%]" />
                             </div>
-                            <span className="text-[10px] text-cyan-400 mt-2 block font-mono">Shannon Entropy Risk Detection > 3.5</span>
+                            <span className="text-[10px] text-cyan-400 mt-2 block font-mono">Shannon Entropy Risk Detection &gt; 3.5</span>
                         </div>
 
                         {/* Feature 3 */}
@@ -86,22 +119,41 @@ export default function ContentSections() {
                             </div>
                         </div>
 
-                        <form className="space-y-5">
+                        <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Work Email</label>
-                                <input type="email" className="input-clean bg-black/40 border-slate-700 h-12" placeholder="security@company.com" />
+                                <input
+                                    type="email"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="input-clean bg-black/40 border-slate-700 h-12 w-full px-4 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                                    placeholder="security@company.com"
+                                />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Inquiry Type</label>
-                                <select className="input-clean bg-black/40 border-slate-700 h-12">
+                                <select
+                                    value={inquiryType}
+                                    onChange={(e) => setInquiryType(e.target.value)}
+                                    className="input-clean bg-black/40 border-slate-700 h-12 w-full px-4 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                                >
                                     <option>API Access</option>
                                     <option>Report False Positive</option>
                                     <option>Enterprise Plan</option>
                                 </select>
                             </div>
-                            <button type="button" className="w-full h-12 rounded-xl bg-gradient-to-r from-cyan-600 to-violet-600 text-white font-bold hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2 group">
-                                <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                Submit Request
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full h-12 rounded-xl bg-gradient-to-r from-cyan-600 to-violet-600 text-white font-bold hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                            >
+                                {loading ? 'Sending...' : (
+                                    <>
+                                        <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                        Submit Request
+                                    </>
+                                )}
                             </button>
                         </form>
                     </div>

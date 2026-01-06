@@ -59,7 +59,7 @@ export default function HeroSection({ children }: { children: React.ReactNode })
 
             {/* --- MAIN CONTENT --- */}
             <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 className="relative z-10 flex flex-col items-center text-center max-w-5xl mx-auto space-y-8"
