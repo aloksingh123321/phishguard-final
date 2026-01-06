@@ -1,12 +1,12 @@
-# Ignore everything by default first? No, standard ignore list.
+# Allow Vercel to see frontend source
+!frontend/
 
-# Frontend - Vercel builds this separately, but we don't need source in the backend function
-frontend/
-node_modules/
-.next/
-out/
-build/
-dist/
+# Ignore build output and dependencies that Vercel installs itself
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/dist/
 .vercel/
 
 # Heavy Python Stuff
@@ -19,7 +19,7 @@ backend/.venv/
 *.pyo
 *.pyd
 
-# Heavy Database Files
+# Heavy Database Files - Exclude local DBs from upload
 *.db
 *.sqlite
 *.sqlite3
