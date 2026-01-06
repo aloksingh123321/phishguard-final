@@ -130,15 +130,45 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
             </motion.div>
 
             {/* Metrics Grid */}
-            <motion.div variants={item} className="grid grid-cols-2 gap-4">
-                <div className="p-6 rounded-2xl border border-white/10 bg-white/5 flex flex-col items-center justify-center backdrop-blur-md">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Confidence Score</span>
-                    <span className={`text-4xl font-bold ${statusColor}`}>{result.confidence_score}%</span>
+            <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Confidence Score with SVG Gauge */}
+                <div className="lg:col-span-2 p-6 rounded-2xl border border-white/10 bg-white/5 flex flex-row items-center justify-between backdrop-blur-md relative overflow-hidden">
+                    <div className="z-10">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">Confidence Score</span>
+                        <span className={`text-5xl font-black ${statusColor} tracking-tighter`}>{result.confidence_score}%</span>
+                        <p className="text-xs text-slate-400 mt-2">AI detection certainty</p>
+                    </div>
+                    {/* SVG Radial Gauge */}
+                    <div className="relative w-24 h-24 flex items-center justify-center">
+                        <svg className="w-full h-full transform -rotate-90">
+                            <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-700/30" />
+                            <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent"
+                                strokeDasharray={251.2}
+                                strokeDashoffset={251.2 - (251.2 * result.confidence_score) / 100}
+                                className={`${isSafe ? 'text-emerald-500' : isCaution ? 'text-amber-500' : 'text-red-500'} transition-all duration-1000 ease-out`}
+                                strokeLinecap="round"
+                            />
+                        </svg>
+                        <ShieldCheck className={`w-8 h-8 absolute ${statusColor}`} />
+                    </div>
                 </div>
-                <div className="p-6 rounded-2xl border border-white/10 bg-white/5 flex flex-col items-center justify-center backdrop-blur-md">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Threat Level</span>
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold tracking-widest ${isSafe ? 'bg-emerald-500/20 text-emerald-400' : isCaution ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
+
+                {/* Threat Level */}
+                <div className="p-6 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-center backdrop-blur-md">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Threat Level</span>
+                    <div className={`px-4 py-2 rounded-lg text-sm font-bold tracking-widest w-fit border ${isSafe ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : isCaution ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
                         {result.risk_level.toUpperCase()}
+                    </div>
+                </div>
+
+                {/* Domain Age (Mocked if not present) */}
+                <div className="p-6 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-center backdrop-blur-md">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Domain Age</span>
+                    <span className="text-2xl font-bold text-slate-200">
+                        {result.domain_age_days ? `${result.domain_age_days} Days` : 'Unknown'}
+                    </span>
+                    <div className="w-full bg-slate-700/30 h-1.5 rounded-full mt-3 overflow-hidden">
+                        <div className="bg-cyan-400 h-full rounded-full" style={{ width: `${Math.min((result.domain_age_days || 0) / 365 * 100, 100)}%` }} />
                     </div>
                 </div>
             </motion.div>

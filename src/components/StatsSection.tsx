@@ -3,7 +3,11 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Activity, ShieldCheck, AlertTriangle, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function StatsSection({ data, history }: { data: any[], history: any[] }) {
+export default function StatsSection({ data, history, onHistoryClick }: {
+    data: any[],
+    history: any[],
+    onHistoryClick?: (url: string) => void
+}) {
     const total = history.length;
 
     // Default data if empty to show an empty chart placeholder
@@ -139,7 +143,8 @@ export default function StatsSection({ data, history }: { data: any[], history: 
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors"
+                                        onClick={() => onHistoryClick && onHistoryClick(item.url)}
+                                        className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
                                     >
                                         <div className="flex items-center gap-3 overflow-hidden">
                                             <div className={`w-1.5 h-1.5 rounded-full ${item.risk_level === 'SAFE' ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' :

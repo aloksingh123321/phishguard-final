@@ -87,7 +87,7 @@ export default function HeroSection({ children }: { children: React.ReactNode })
 
                 {/* Interactive Scanner Area */}
                 <div className="w-full max-w-2xl mt-12 mb-8 relative z-20">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-violet-600 rounded-2xl blur-2xl opacity-20 animate-pulse-glow" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-600 rounded-2xl blur-3xl opacity-30 animate-pulse-glow" />
                     {children}
                 </div>
 
