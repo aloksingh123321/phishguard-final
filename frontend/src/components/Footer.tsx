@@ -67,7 +67,7 @@ export default function Footer() {
 
             <div className="border-t border-white/5 py-8 text-center">
                 <p className="text-xs text-slate-600 font-mono">
-                    © 2026 Alok Singh. All rights reserved. <span className="text-slate-500">v2.1.0-stable</span>
+                    © 2026 Alok Singh. All rights reserved. <span className="text-slate-500">v2.2.0-Enterprise (Monolith)</span>
                 </p>
             </div>
         </footer>
