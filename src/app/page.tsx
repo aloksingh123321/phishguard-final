@@ -88,6 +88,12 @@ export default function Home() {
             setScanStatus('');
         }
     };
+    // --- LOGIC: HISTORY CLICK ---
+    const handleHistoryClick = (selectedUrl: string) => {
+        setUrl(selectedUrl);
+        // Optional: Scroll to top smoothly
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     // --- LOGIC: STATS ---
     const statsData = useMemo(() => {
@@ -182,7 +188,7 @@ export default function Home() {
 
             {/* STATS */}
             <section id="analytics" className="relative z-10 -mt-10 px-4">
-                <StatsSection data={statsData} history={history} />
+                <StatsSection data={statsData} history={history} onHistoryClick={handleHistoryClick} />
             </section>
 
             {/* INFO & CONTACT */}

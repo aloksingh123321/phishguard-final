@@ -48,7 +48,11 @@ export default function Footer() {
 
                 {/* Social Column */}
                 <div>
-                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6 border-l-2 border-amber-500 pl-3">Connect</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6 border-l-2 border-amber-500 pl-3">Company</h3>
+                    <ul className="space-y-3 text-sm text-slate-400 mb-6">
+                        <li><Link href="/about" className="hover:text-amber-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">About Us</Link></li>
+                        <li><Link href="/contact" className="hover:text-amber-400 transition-colors flex items-center gap-2 hover:translate-x-1 duration-300">Contact Support</Link></li>
+                    </ul>
                     <div className="flex gap-4">
                         <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-white/10 hover:text-white hover:scale-110 transition-all border border-white/5 hover:border-white/20">
                             <Github className="w-5 h-5" />

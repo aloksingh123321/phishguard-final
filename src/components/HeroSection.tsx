@@ -21,25 +21,37 @@ export default function HeroSection({ children }: { children: React.ReactNode })
             {/* --- 3D FLOATING ELEMENTS --- */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <motion.div
-                    animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+                    animate={{ y: [0, -20, 0], rotate: [0, 2, 0] }}
                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-1/4 left-[10%] p-4 glass rounded-2xl border-l-4 border-cyan-500 opacity-60 hidden lg:block"
+                    className="absolute top-1/4 left-[5%] lg:left-[10%] p-3 glass rounded-xl border border-white/10 flex items-center gap-3 shadow-xl backdrop-blur-md opacity-0 lg:opacity-100"
                 >
-                    <Zap className="w-6 h-6 text-cyan-400" />
+                    <div className="p-2 rounded-lg bg-red-500/20 text-red-400">
+                        <Zap size={20} />
+                    </div>
+                    <div>
+                        <div className="text-xs font-bold text-white">Threat Blocked</div>
+                        <div className="text-[10px] text-gray-400">Just now • 127.0.0.1</div>
+                    </div>
                 </motion.div>
 
                 <motion.div
-                    animate={{ y: [0, 30, 0], rotate: [0, -5, 0] }}
+                    animate={{ y: [0, 30, 0], rotate: [0, -2, 0] }}
                     transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="absolute bottom-1/3 right-[15%] p-4 glass rounded-2xl border-l-4 border-violet-500 opacity-60 hidden lg:block"
+                    className="absolute bottom-1/3 right-[5%] lg:right-[15%] p-3 glass rounded-xl border border-white/10 flex items-center gap-3 shadow-xl backdrop-blur-md opacity-0 lg:opacity-100"
                 >
-                    <Lock className="w-6 h-6 text-violet-400" />
+                    <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">
+                        <ShieldCheck size={20} />
+                    </div>
+                    <div>
+                        <div className="text-xs font-bold text-white">System Secure</div>
+                        <div className="text-[10px] text-gray-400">Real-time protection</div>
+                    </div>
                 </motion.div>
 
                 <motion.div
                     animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
                     transition={{ duration: 4, repeat: Infinity }}
-                    className="absolute top-1/3 right-[10%] text-cyan-900/20"
+                    className="absolute top-1/3 right-[10%] text-cyan-900/20 -z-10"
                 >
                     <Globe className="w-64 h-64" />
                 </motion.div>
@@ -58,7 +70,7 @@ export default function HeroSection({ children }: { children: React.ReactNode })
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                     </span>
-                    <span className="text-xs font-mono text-cyan-300 tracking-widest font-bold">THREAT INTEL ENGINE V2.0</span>
+                    <span className="text-xs font-mono text-cyan-300 tracking-widest font-bold">SYSTEM ONLINE // ACTIVE</span>
                 </div>
 
                 {/* Typography */}

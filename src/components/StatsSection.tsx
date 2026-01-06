@@ -37,8 +37,8 @@ export default function StatsSection({ data, history }: { data: any[], history: 
                                     data={chartData}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={90}
+                                    innerRadius={80}
+                                    outerRadius={95}
                                     paddingAngle={5}
                                     dataKey="value"
                                     stroke="none"
@@ -121,37 +121,48 @@ export default function StatsSection({ data, history }: { data: any[], history: 
                         </div>
                     </motion.div>
 
-                    {/* Live Feed Ticker */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 }}
-                        className="md:col-span-2 glass-card rounded-2xl p-4 flex items-center gap-4 border border-cyan-500/20 shadow-[0_0_30px_rgba(0,0,0,0.2)]"
-                    >
-                        <div className="flex items-center gap-2 px-3 py-1 bg-cyan-950/50 rounded-lg border border-cyan-500/20">
-                            <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
-                            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider whitespace-nowrap">Live Feed</span>
+                    {/* Live Feed Widget */}
+                    <div className="md:col-span-2 glass-card rounded-2xl p-6 border border-cyan-500/20 shadow-[0_0_30px_rgba(0,0,0,0.2)]">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-cyan-500 blur-sm opacity-50 animate-pulse" />
+                                <Radio className="w-4 h-4 text-cyan-400 relative z-10" />
+                            </div>
+                            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Live Threat Intelligence Feed</span>
                         </div>
 
-                        <div className="h-6 w-[1px] bg-white/10" />
-
-                        <div className="flex-1 overflow-hidden">
+                        <div className="space-y-3">
                             {history.length > 0 ? (
-                                <div className="flex items-center justify-between animate-in slide-in-from-right duration-500 fade-in">
-                                    <span className="text-sm text-slate-300 font-mono truncate max-w-[200px] md:max-w-md">{history[0].url}</span>
-                                    <span className={`text-[10px] font-bold px-2 py-1 rounded border ${history[0].risk_level === 'SAFE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                            history[0].risk_level === 'CRITICAL' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                                history.slice(0, 3).map((item, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors"
+                                    >
+                                        <div className="flex items-center gap-3 overflow-hidden">
+                                            <div className={`w-1.5 h-1.5 rounded-full ${item.risk_level === 'SAFE' ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' :
+                                                item.risk_level === 'CRITICAL' ? 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]' :
+                                                    'bg-amber-400'
+                                                }`} />
+                                            <span className="text-xs text-slate-300 font-mono truncate max-w-[150px] md:max-w-sm">{item.url}</span>
+                                        </div>
+                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${item.risk_level === 'SAFE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                            item.risk_level === 'CRITICAL' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
                                                 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                        }`}>
-                                        {history[0].risk_level}
-                                    </span>
-                                </div>
+                                            }`}>
+                                            {item.risk_level}
+                                        </span>
+                                    </motion.div>
+                                ))
                             ) : (
-                                <span className="text-xs text-slate-500 italic">Waiting for incoming traffic...</span>
+                                <div className="text-center py-4 text-slate-500 text-xs italic">
+                                    Initializing threat detection sensors...
+                                </div>
                             )}
                         </div>
-                    </motion.div>
+                    </div>
 
                 </div>
             </div>
