@@ -1,17 +1,16 @@
 import os
 import sqlite3
 import datetime
+import json
 
-# Determine DB path for local usage
+# --- CONFIGURATION ---
+# User Provided Turso Credentials
+TURSO_URL = os.environ.get("TURSO_DATABASE_URL", "libsql://phishguard-db-alok123321.aws-ap-south-1.turso.io")
+TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN", "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3Njc0MTY1MDAsImlkIjoiNDdiMWRlMGMtOWU2MS00YWJlLTgzZmQtNDVkNTQ2YmM4NTI5IiwicmlkIjoiZDYwNmI3NzktN2VmYS00NjUwLTk3NmQtYTFmMTVlM2E2ODYwIn0.NYIYwj6beEp90tnR4zN6-nqy1rL5zllHrhcOTG_kDhk6EOD1WWLcjGX1Bh6RDlv_USeUfDUcm9mdyjkGRbaICg")
+
+# Local Fallback
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if os.environ.get('VERCEL') == '1':
-    # Vercel only allows writing to /tmp
-    DB_NAME = "/tmp/phishguard.db"
-else:
-    DB_NAME = os.path.join(BASE_DIR, "backend", "phishguard.db")
-    if not os.path.exists(os.path.dirname(DB_NAME)):
-        # Fallback if running from root without backend folder in path correctly
-        DB_NAME = "phishguard.db"
+LOCAL_DB_NAME = os.path.join(BASE_DIR, "backend", "phishguard.db")
 
 class TursoCursor:
     """Wrapper to make Turso ResultSet behave like sqlite3 cursor"""
@@ -19,42 +18,44 @@ class TursoCursor:
         self.client = client
         self.rows = []
         self.row_factory = None
-        self._last_rowid = None # Not easily available in simple HTTP execution without RETURNING
+        self._last_rowid = None 
     
     def execute(self, sql, params=()):
-        # Adapt params: sqlite3 uses ?, Turso supports ?
-        # Conversion might be needed if params is a tuple, libsql-client expects list/tuple
-        
-        # Simple logging for debug
-        # print(f"Executing: {sql} with {params}")
-
         try:
-             # libsql-client execute returns a ResultSet
+            # libsql-client expects params as a tuple or list
+            # We need to print for debugging
+            # print(f"DEBUG: Executing {sql} with {params}")
+            
             rs = self.client.execute(sql, params)
             self.rows = rs.rows
+            self._last_rowid = rs.last_insert_rowid
             return self
         except Exception as e:
-            print(f"Turso Error: {e}")
+            print(f"❌ Turso Query Error: {e}")
             raise e
 
     def fetchall(self):
-        # Apply row_factory if present
+        # Convert libsql rows (Row objects) to dicts if row_factory is set
         if self.row_factory == sqlite3.Row:
-            # mimic sqlite3.Row behavior (dict-like)
-            return [dict(row) for row in self.rows]
-        return self.rows
+            return [dict(zip(row.keys(), row)) for row in self.rows]
+        
+        # Default: list of tuples
+        return [tuple(row) for row in self.rows]
 
     def fetchone(self):
         if not self.rows:
             return None
         row = self.rows[0]
         if self.row_factory == sqlite3.Row:
-            return dict(row)
-        return row
+            return dict(zip(row.keys(), row))
+        return tuple(row)
     
     @property
     def lastrowid(self):
         return self._last_rowid
+    
+    def close(self):
+        pass 
 
 class TursoConnection:
     """Wrapper to make Turso Client behave like sqlite3 connection"""
@@ -68,32 +69,27 @@ class TursoConnection:
         return cur
 
     def commit(self):
-        # Turso/libsql over HTTP is often auto-commit or handles it differently
-        # client.commit() might not exist on the simplified client, checking docs is hard locally.
-        # But commonly the execute() calls are atomic or part of a transaction if explicitly started.
-        # For this simple app, passing might be enough if autocommit is on.
-        # 'libsql_client' sync client usually has sync methods. 
-        # Actually client.sync() is for embedded replicas.
+        # Turso HTTP client is auto-commit for single statements usually
         pass
 
     def close(self):
         self.client.close()
 
 def get_db_connection():
-    turso_url = os.environ.get("DATABASE_URL")
-    turso_auth = os.environ.get("DATABASE_AUTH_TOKEN")
-
-    if turso_url and turso_auth:
-        try:
-            import libsql_client
-            # Use the sync client for compatibility with Flask's sync route handlers
-            client = libsql_client.create_client_sync(url=turso_url, auth_token=turso_auth)
+    # 1. Try connecting to Turso
+    try:
+        import libsql_client
+        # Ensure we have a valid URL (not local file for Turso client)
+        if "libsql://" in TURSO_URL or "https://" in TURSO_URL:
+            # print(f"🔌 Connecting to Turso: {TURSO_URL}")
+            client = libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
             return TursoConnection(client)
-        except ImportError:
-            print("⚠️ libSQL Client not installed (pip install libsql-client). Falling back to local SQLite.")
-        except Exception as e:
-            print(f"⚠️ Turso Connection Failed: {e}. Falling back to local SQLite.")
+    except ImportError:
+        print("⚠️ libSQL Client not installed. Using Local SQLite.")
+    except Exception as e:
+        print(f"⚠️ Turso Connection Failed: {e}. Falling back to Local SQLite.")
 
-    # Fallback to Local SQLite
-    conn = sqlite3.connect(DB_NAME)
+    # 2. Fallback to Local SQLite (Development / Backup)
+    print(f"📂 Using Local SQLite: {LOCAL_DB_NAME}")
+    conn = sqlite3.connect(LOCAL_DB_NAME)
     return conn
