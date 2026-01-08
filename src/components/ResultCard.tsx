@@ -28,6 +28,7 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
     // PDF Generation Logic
     const handleDownloadPDF = async () => {
         if (!result) return;
+        console.log("Starting PDF Generation...");
         setIsGeneratingPdf(true);
 
         try {
@@ -170,6 +171,7 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
             }
 
             doc.save(`PhishGuard_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+            console.log("PDF Saved. Triggering success toast.");
             toast.success("Report downloaded successfully");
         } catch (error) {
             console.error("PDF Generation Error", error);
