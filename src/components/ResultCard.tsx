@@ -31,8 +31,16 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
         setIsGeneratingPdf(true);
 
         try {
-            const jsPDF = (await import('jspdf')).default;
-            const autoTable = (await import('jspdf-autotable')).default;
+            // Robust import for jsPDF to handle different module formats (ESM/CJS)
+            const jsPDFModule = await import('jspdf');
+            const jsPDF = jsPDFModule.default || (jsPDFModule as any).jsPDF;
+            if (!jsPDF) throw new Error("Failed to load jsPDF: Module not found");
+
+            // Robust import for autoTable
+            const autoTableModule = await import('jspdf-autotable');
+            const autoTable = autoTableModule.default || (autoTableModule as any).autoTable || autoTableModule;
+            // Note: autoTable usually attaches purely by side-effect or returns a function depending on version
+
 
             const doc = new jsPDF();
             const pageWidth = doc.internal.pageSize.width;
@@ -109,24 +117,47 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
                     insight.replace(/^[🚨⛔⚠️🎣✅🔒ℹ️]*/g, '').trim() // Strip emojis for clean PDF
                 ]);
 
-                autoTable(doc, {
-                    startY: startY + 35,
-                    head: [['Detailed Heuristic Analysis']],
-                    body: tableBody,
-                    theme: 'grid',
-                    headStyles: {
-                        fillColor: [15, 23, 42], // Slate-900
-                        textColor: 255,
-                        fontStyle: 'bold'
-                    },
-                    styles: {
-                        fontSize: 10,
-                        cellPadding: 3,
-                    },
-                    alternateRowStyles: {
-                        fillColor: [248, 250, 252]
-                    }
-                });
+                // AutoTable Execution
+                if (typeof autoTable === 'function') {
+                    autoTable(doc, {
+                        startY: startY + 35,
+                        head: [['Detailed Heuristic Analysis']],
+                        body: tableBody,
+                        theme: 'grid',
+                        headStyles: {
+                            fillColor: [15, 23, 42], // Slate-900
+                            textColor: 255,
+                            fontStyle: 'bold'
+                        },
+                        styles: {
+                            fontSize: 10,
+                            cellPadding: 3,
+                        },
+                        alternateRowStyles: {
+                            fillColor: [248, 250, 252]
+                        }
+                    });
+                } else if ((doc as any).autoTable) {
+                    // Fallback: Sometimes it attaches to doc prototype
+                    (doc as any).autoTable({
+                        startY: startY + 35,
+                        head: [['Detailed Heuristic Analysis']],
+                        body: tableBody,
+                        theme: 'grid',
+                        headStyles: {
+                            fillColor: [15, 23, 42], // Slate-900
+                            textColor: 255,
+                            fontStyle: 'bold'
+                        },
+                        styles: {
+                            fontSize: 10,
+                            cellPadding: 3,
+                        },
+                        alternateRowStyles: {
+                            fillColor: [248, 250, 252]
+                        }
+                    });
+                }
             }
 
             // Footer
