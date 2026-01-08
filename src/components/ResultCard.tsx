@@ -2,9 +2,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, AlertTriangle, Globe, Lock, Shield, ShieldCheck, Eye, Terminal, Download, AlertOctagon } from 'lucide-react';
-// Dynamic imports used in handler
-// import jsPDF from 'jspdf';
-// import autoTable from 'jspdf-autotable';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { toast } from 'sonner';
 
 interface ScanResponse {
@@ -32,16 +31,8 @@ const ResultCard = ({ result }: { result: ScanResponse }) => {
         setIsGeneratingPdf(true);
 
         try {
-            // Robust import for jsPDF to handle different module formats (ESM/CJS)
-            const jsPDFModule = await import('jspdf');
-            const jsPDF = jsPDFModule.default || (jsPDFModule as any).jsPDF;
-            if (!jsPDF) throw new Error("Failed to load jsPDF: Module not found");
-
-            // Robust import for autoTable
-            const autoTableModule = await import('jspdf-autotable');
-            const autoTable = autoTableModule.default || (autoTableModule as any).autoTable || autoTableModule;
-            // Note: autoTable usually attaches purely by side-effect or returns a function depending on version
-
+            // Static imports are now used at the top level
+            // No need for dynamic await import checks
 
             const doc = new jsPDF();
             const pageWidth = doc.internal.pageSize.width;
