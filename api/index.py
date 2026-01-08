@@ -89,20 +89,22 @@ def scan_url():
     # 1. Logic Run
     result = extract_features(url, html_content="") 
     
-    # 2. Database Save
+    # 2. Database Save (Non-Blocking Attempt)
     try:
         conn = get_db_connection()
-        c = conn.cursor()
-        
-        # Convert insights list to JSON string for storage
-        insights_json = json.dumps(result.get('insights', []))
-        
-        c.execute("INSERT INTO scan_history (url, risk_level, status, insights, timestamp) VALUES (?, ?, ?, ?, ?)",
-                  (url, result.get('risk_level'), result.get('status'), insights_json, datetime.datetime.now()))
-        conn.commit()
-        conn.close()
+        if conn:
+            c = conn.cursor()
+            
+            # Convert insights list to JSON string for storage
+            insights_json = json.dumps(result.get('insights', []))
+            
+            c.execute("INSERT INTO scan_history (url, risk_level, status, insights, timestamp) VALUES (?, ?, ?, ?, ?)",
+                      (url, result.get('risk_level'), result.get('status'), insights_json, datetime.datetime.now()))
+            conn.commit()
+            conn.close()
     except Exception as e:
-        print(f"Database Error: {e}")
+        # Critical: Do not fail the request if DB fails. Just log it.
+        print(f"⚠️ Database Save Skipped: {e}")
 
     # 3. Format Response for Frontend
     # Ensure keys match what Frontend expects (ScanResult interface)

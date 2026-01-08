@@ -1,6 +1,6 @@
 import re
 from urllib.parse import urlparse
-import socket
+
 import math
 from difflib import SequenceMatcher
 
